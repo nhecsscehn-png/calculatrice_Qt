@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     // Rendre les boutons à nouveau formidables
+    QStringList buttonList;
+    buttonList << "7" << "8" << "9" << "4" << "5" << "6" << "1" << "2" << "3" << "0";
 
     QLabel *displayLbl = new QLabel();
 
@@ -24,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     QVBoxLayout *vb0 = new QVBoxLayout();
     QHBoxLayout *hb0 = nullptr;
 
-    for(int m = 0; m < 10; m++){
+    for(int m = 0; m < buttonList.size(); m++){
         if(m % 3 == 0){
             hb0 = new QHBoxLayout(); // Pointeur nommé "hb0" qui pointe sur un nouveau conteneur horizontal
             vb0->addLayout(hb0); // Conteneur "vb0" dans lequel l'on empile les conteneurs horizontaux
