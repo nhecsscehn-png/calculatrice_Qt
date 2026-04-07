@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStack>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,5 +26,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QStack<QString> m_calcContents;
 };
 #endif // MAINWINDOW_H
