@@ -15,7 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
     buttonList << "7" << "8" << "9" << "4" << "5" << "6" << "1" << "2" << "3" << "0";
 
     QStringList buttonFunctions;
-    buttonFunctions << "÷" << "×" << "-" << "+" << "=";
+    buttonFunctions << "÷" << "×" << "-" << "+";
+
+    QStringList buttonExtras;
 
     QLabel *displayLbl = new QLabel();
 
