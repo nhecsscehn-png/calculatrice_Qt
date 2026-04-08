@@ -57,8 +57,17 @@ MainWindow::MainWindow(QWidget *parent)
         QPushButton *tempButton = new QPushButton(buttonArithmetic.at(k));
         connect(tempButton, &QPushButton::clicked, [tempButton, displayLbl, this](){
             displayLbl->setText(displayLbl->text() + tempButton->text());
-            qDebug() << this->m_calcContents.top();
+            bool isNumber = this->m_calcContents.top().back().isNumber();
+            if(!isNumber){
+                this->m_calcContents.pop();
+                //displayLbl->text().chop(displayLbl->text().length()-1);
+                QString str0 = displayLbl->text();
+                str0.chop(1);
+                displayLbl->setText(str0);
+            }
             this->m_calcContents.push(tempButton->text());
+
+            // qDebug() << this->m_calcContents;
         });
         vb1->addWidget(tempButton);
     }
