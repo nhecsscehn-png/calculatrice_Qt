@@ -55,8 +55,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Ajouter des boutons de symboles arithmétique
     for(int k = 0; k < buttonArithmetic.size(); ++k){
         QPushButton *tempButton = new QPushButton(buttonArithmetic.at(k));
-        connect(tempButton, &QPushButton::clicked, [displayLbl, this](){
+        connect(tempButton, &QPushButton::clicked, [tempButton, displayLbl, this](){
             displayLbl->setText(displayLbl->text() + tempButton->text());
+            qDebug() << this->m_calcContents.top();
             this->m_calcContents.push(tempButton->text());
         });
         vb1->addWidget(tempButton);
