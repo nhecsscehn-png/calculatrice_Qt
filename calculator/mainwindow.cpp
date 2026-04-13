@@ -56,9 +56,12 @@ MainWindow::MainWindow(QWidget *parent)
     for(int k = 0; k < buttonArithmetic.size(); ++k){
         QPushButton *tempButton = new QPushButton(buttonArithmetic.at(k));
         connect(tempButton, &QPushButton::clicked, [tempButton, displayLbl, this](){
-            displayLbl->setText(displayLbl->text() + tempButton->text());
+            if(this->m_calcContents.isEmpty()){ // Signifie que le champs est vide, l'on ne peut pas écrire d'opérateur (-,+, etc) pour commencer
+                return;
+            }
+            // displayLbl->setText(displayLbl->text() + tempButton->text()); // Cette ligne était en trop avec la même qui est déjà présente plus en dessous
             bool isNumber = this->m_calcContents.top().back().isNumber();
-            if(!isNumber){
+            if(!isNumber && displayLbl->text().size() > 1){
                 this->m_calcContents.pop();
                 //displayLbl->text().chop(displayLbl->text().length()-1);
                 QString str0 = displayLbl->text();
@@ -66,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
                 displayLbl->setText(str0);
             }
             this->m_calcContents.push(tempButton->text());
+            displayLbl->setText(displayLbl->text() + tempButton->text());
 
             // qDebug() << this->m_calcContents;
         });
@@ -75,16 +79,101 @@ MainWindow::MainWindow(QWidget *parent)
     hb1->addLayout(vb0);
     hb1->addLayout(vb1);
 
-    // Ajouter des boutons en plus
-    for(int p = 0; p < buttonExtras.size(); ++p){
-        QPushButton *tempButton = new QPushButton(buttonExtras.at(p));
+    // // Ajouter des boutons en plus
+    // for(int p = 0; p < buttonExtras.size(); ++p){
+    //     QPushButton *tempButton = new QPushButton(buttonExtras.at(p));
 
-        // Rend meilleur
-        if(buttonExtras.at(p).isEmpty() || buttonExtras.at(p).isNull()){
-            tempButton->setDisabled(true);
+    //     // Rend meilleur
+    //     if(buttonExtras.at(p).isEmpty() || buttonExtras.at(p).isNull()){
+    //         tempButton->setDisabled(true);
+    //     }
+    //     vb2->addWidget(tempButton);
+    // }
+
+    QPushButton *clearButton = new QPushButton("C");
+    connect(clearButton, &QPushButton::clicked, [clearButton, displayLbl, this](){
+        displayLbl->clear();
+        this->m_calcContents.clear();
+    });
+    vb2->addWidget(clearButton);
+
+    QPushButton *backspaceButton = new QPushButton("⌫");
+    connect(backspaceButton, &QPushButton::clicked, [backspaceButton, displayLbl, this](){
+        if(displayLbl->text().size() > 0){
+            this->m_calcContents.pop();
+            QString str0 = displayLbl->text();
+            str0.chop(1);
+            displayLbl->setText(str0);
         }
-        vb2->addWidget(tempButton);
-    }
+    });
+    vb2->addWidget(backspaceButton);
+
+    QPushButton *equalButton = new QPushButton("=");
+    connect(equalButton, &QPushButton::clicked, [equalButton, displayLbl, this](){
+        QString strNum = "";
+        int nLen = 0;
+        QVector<QString> tempVec;
+        for(auto &&d0 : m_calcContents){
+            bool isNumber = d0.back().isNumber();
+            if(isNumber){
+                strNum += d0.back();
+            }
+            else{
+                tempVec.push_back(strNum);
+                tempVec.push_back(d0.back());
+                strNum.clear();
+            }
+            if(nLen == this->m_calcContents.size()-1){
+                tempVec.push_back(strNum);
+            }
+            nLen++;
+        }
+        int tempTotal = 1;
+        QChar charOperator = ' ';
+        for(int b = 0; b < tempVec.size(); ++b){
+            if(tempVec.at(b).isEmpty() || tempVec.at(b).isNull()){return;}
+
+            if(!tempVec.at(b).toLower().back().isNumber()){
+                charOperator = tempVec.at(b).toLower().back();
+                continue;
+            }
+            if(charOperator == 'x'){
+                tempTotal *= tempVec.at(b).toInt();
+                charOperator = ' ';
+                continue;
+            }
+            if(charOperator == '/'){
+                tempTotal *= tempVec.at(b).toInt();
+                charOperator = ' ';
+                continue;
+            }
+            if(charOperator == '+'){
+                tempTotal *= tempVec.at(b).toInt();
+                charOperator = ' ';
+                continue;
+            }
+            if(charOperator == '-'){
+                tempTotal *= tempVec.at(b).toInt();
+                charOperator = ' ';
+                continue;
+            }
+            if(tempVec.at(b).toLower().back().isNumber()){
+                tempTotal *= tempVec.at(b).toInt();
+            }
+        }
+        displayLbl->setText(QString::number(tempTotal));
+        // int nx0 = strNum.toInt();
+        // strNum.clear();
+        // qDebug() << nx0;
+    });
+    vb2->addWidget(equalButton);
+
+    QPushButton *emptyButton = new QPushButton("C");
+    emptyButton->setDisabled(true);
+
+    vb2->addWidget(emptyButton);
+
+
     hb1->addLayout(vb2);
 
     // ui->verticalLayout->addLayout(vb0);
